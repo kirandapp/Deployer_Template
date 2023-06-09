@@ -10,7 +10,7 @@ const settings = {
 };
 module.exports = {
   
-  defaultNetwork: "hardhat",
+  defaultNetwork: "fantom",
   solidity: {
     compilers: [
       { 
