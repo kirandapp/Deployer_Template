@@ -6,7 +6,7 @@ This repository contains code for an API that allows you to deploy a contract by
 
 Make sure you have the following installed on your system:
 
-- Node.js (v14 or higher)
+- Node.js (v18.15.0 at the time of writing)
 - NPM (Node Package Manager)
 
 ## Getting Started
@@ -45,17 +45,17 @@ you will get "Hi"
 - Set the request method to `POST`.
 - Set the request body as JSON and provide the contract name:
 
-{
-"tokenName": "MyToken"
+{<br />
+"tokenName": "MyToken"<br />
 }
 
 
 You will receive a JSON response containing the deployment details of the contract:
 
-{
-"message": "Token contract deployed successfully",
-"tokenName": "MyToken",
-"contractAddress": "0x..."
+{<br />
+"message": "Token contract deployed successfully",<br />
+"tokenName": "MyToken",<br />
+"contractAddress": "0x..."<br />
 }
 
 
