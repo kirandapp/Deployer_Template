@@ -159,7 +159,7 @@ interface IUniswapV2Router02 {
         );
 }
 
-contract DejitaruTsuka is Context, IERC20, Ownable {
+contract CONTRACTNAME is Context, IERC20, Ownable {
 
     using SafeMath for uint256;
 
@@ -178,7 +178,7 @@ contract DejitaruTsuka is Context, IERC20, Ownable {
     uint256 private _redisFeeOnBuy = 0;
     uint256 private _taxFeeOnBuy = 0;
     uint256 private _redisFeeOnSell = 0;
-    uint256 private _taxFeeOnSell = 6;
+    uint256 private _taxFeeOnSell = 0;
 
     //Original Fee
     uint256 private _redisFee = _redisFeeOnSell;
@@ -187,9 +187,10 @@ contract DejitaruTsuka is Context, IERC20, Ownable {
     uint256 private _previousredisFee = _redisFee;
     uint256 private _previoustaxFee = _taxFee;
 
-    mapping(address => bool) public bots; mapping (address => uint256) public _buyMap;
-    address payable private _developmentAddress = payable(0x64bED9019f80da5E77EA8267ffC3Ac035Cb29121);
-    address payable private _marketingAddress = payable(0x64bED9019f80da5E77EA8267ffC3Ac035Cb29121);
+    mapping(address => bool) public bots; 
+    mapping (address => uint256) public _buyMap;
+    address payable private _developmentAddress;
+    address payable private _marketingAddress;
 
     IUniswapV2Router02 public uniswapV2Router;
     address public uniswapV2Pair;
@@ -214,7 +215,12 @@ contract DejitaruTsuka is Context, IERC20, Ownable {
         string memory __name,
         string memory __symbol,
         uint8 __decimals,
-        uint256 _totalsupply
+        uint256 _totalsupply,
+        address payable __developmentAddress,
+        address payable __marketingAddress,
+        uint256 __maxTxAmount,
+        uint256 __maxWalletSize,
+        uint256 __swapTokensAtAmount
     ) {
         _name = __name;
         _symbol = __symbol;
@@ -229,6 +235,12 @@ contract DejitaruTsuka is Context, IERC20, Ownable {
         uniswapV2Router = _uniswapV2Router;
         uniswapV2Pair = IUniswapV2Factory(_uniswapV2Router.factory())
             .createPair(address(this), _uniswapV2Router.WETH());
+
+        _developmentAddress = payable(__developmentAddress);
+        _marketingAddress = payable(__marketingAddress);
+        _maxTxAmount = __maxTxAmount * (10**__decimals);
+        _maxWalletSize = __maxWalletSize * (10**__decimals);
+        _swapTokensAtAmount = __swapTokensAtAmount * (10**__decimals);
 
         _isExcludedFromFee[owner()] = true;
         _isExcludedFromFee[address(this)] = true;

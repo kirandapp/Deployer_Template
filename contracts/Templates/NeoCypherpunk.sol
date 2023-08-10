@@ -625,18 +625,18 @@ interface IUniswapV2Factory {
 }
 
 
-contract NeoCypherpunk is ERC20, Ownable {
+contract CONTRACTNAME is ERC20, Ownable {
     IUniswapV2Router02 public uniswapV2Router; 
     address public uniswapV2Pair;
 
     bool private swapping;
     bool public tradingOpen;
 
-    uint256 public swapTokensAtAmount = 210_000 * (10**18);
-    uint256 public maxTxAmount = 210_000_000_000 ether;
-    uint256 public maxWalletAmount= 410_000_000_000 ether;
+    uint256 public swapTokensAtAmount;
+    uint256 public maxTxAmount;
+    uint256 public maxWalletAmount;
 
-    uint256 public maxFeePercent = 20;
+    uint256 public maxFeePercent;
 
     uint256 public buyLPFee = 0;
     uint256 public buyMarketingFee = 0;
@@ -645,7 +645,7 @@ contract NeoCypherpunk is ERC20, Ownable {
 
     uint256 public pendingmarketingFees;
 
-    address payable public marketingAddress = payable(0xd250AE2Ef7506dBFC2Cff91660A15F45001dB0ca);
+    address payable public marketingAddress; //payable(0xd250AE2Ef7506dBFC2Cff91660A15F45001dB0ca)
 
     mapping (address => bool) private _isExcludedFromFees;
     mapping (address => bool) public _isExcludedFromLimits;
@@ -663,23 +663,36 @@ contract NeoCypherpunk is ERC20, Ownable {
     constructor(
         address _router,
         string memory _name,
-        string memory _symbol
+        string memory _symbol,
+        uint256 _maxFeePercent,
+        address payable _marketingAddress,
+        uint256 initialSupply,
+        uint256 _swapTokensAtAmount,
+        uint256 _maxTxAmount,
+        uint256 _maxWalletAmount
         ) ERC20(_name, _symbol) {
         IUniswapV2Router02 _uniswapV2Router = IUniswapV2Router02(_router);
-        //0xD99D1c33F9fC3444f8101754aBC46c52416550D1    testnet router
-        //0x7a250d5630B4cF539739dF2C5dAcb4c659F2488D    mainnet router
+        //0xD99D1c33F9fC3444f8101754aBC46c52416550D1    testnet router bsc
+        //0x7a250d5630B4cF539739dF2C5dAcb4c659F2488D    mainnet router bscs
         address _uniswapV2Pair = IUniswapV2Factory(_uniswapV2Router.factory())
             .createPair(address(this), _uniswapV2Router.WETH());
         uniswapV2Router = _uniswapV2Router;
         uniswapV2Pair = _uniswapV2Pair;
         _setAutomatedMarketMakerPair(_uniswapV2Pair, true);
+
+        maxFeePercent = _maxFeePercent;
+        marketingAddress = payable(_marketingAddress);
+        swapTokensAtAmount = _swapTokensAtAmount * (10**18);
+        maxTxAmount = _maxTxAmount * (10**18);
+        maxWalletAmount = _maxWalletAmount * (10**18);
+
         _isExcludedFromLimits[owner()] = true;
         _isExcludedFromLimits[0x000000000000000000000000000000000000dEaD] = true;
-        _isExcludedFromLimits[marketingAddress] = true;
+        _isExcludedFromLimits[_marketingAddress] = true;
         _isExcludedFromFees[owner()] = true;
         _isExcludedFromFees[address(this)] = true;
-        _isExcludedFromFees[marketingAddress] = true;
-        _mint(owner(), 21_000_000_000_000 * (10**18));
+        _isExcludedFromFees[_marketingAddress] = true;
+        _mint(owner(), initialSupply * (10**18));
     }
     receive() external payable {}
 

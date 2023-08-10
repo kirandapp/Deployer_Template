@@ -591,7 +591,7 @@ contract ERC20 is Context, IERC20, IERC20Metadata {
 pragma solidity ^0.8.0;
 
 
-contract PepeToken is Ownable, ERC20 {
+contract CONTRACTNAME is Ownable, ERC20 {
     bool public limited;
     uint256 public maxHoldingAmount;
     uint256 public minHoldingAmount;

@@ -8,4 +8,7 @@ typechain-types
 # Hardhat files
 cache
 artifacts
+Deployer_Server
+test
+test.sh
 

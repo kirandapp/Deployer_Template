@@ -7,7 +7,7 @@
  * Telegram:
  * https://t.me/JejuInuPortal
  */
-pragma solidity 0.8.17;
+pragma solidity 0.8.18;
 
 abstract contract Context {
     function _msgSender() internal view virtual returns (address) {
@@ -390,7 +390,7 @@ interface IDexFactory {
         returns (address pair);
 }
 
-contract JEJU is ERC20, Ownable {
+contract CONTRACTNAME is ERC20, Ownable {
     uint256 public maxBuyAmount;
     uint256 public maxSellAmount;
     uint256 public maxWallet;
@@ -462,7 +462,15 @@ contract JEJU is ERC20, Ownable {
     constructor(
         address _dexRouter,
         string memory _name,
-        string memory _symbol
+        string memory _symbol,
+        uint256 _buyOperationsFee,
+        uint256 _buyLiquidityFee,
+        uint256 _sellOperationsFee,
+        uint256 _sellLiquidityFee,
+        address _operationsAddress,
+        address supplyAddress1,
+        address supplyAddress2,
+        address supplyAddress3
         ) payable ERC20(_name, _symbol) {
         address newOwner = msg.sender;
 
@@ -484,20 +492,20 @@ contract JEJU is ERC20, Ownable {
         maxWallet = (totalSupply * 2) / 100;
         swapTokensAtAmount = (totalSupply * 5) / 10000; // 0.05 %
 
-        buyOperationsFee = 5;
-        buyLiquidityFee = 0;
+        buyOperationsFee = _buyOperationsFee;
+        buyLiquidityFee = _buyLiquidityFee;
         buyTotalFees = buyOperationsFee + buyLiquidityFee;
 
-        defaultOperationsFee = 5;
-        defaultLiquidityFee = 0;
-        defaultOperationsSellFee = 5;
-        defaultLiquiditySellFee = 0;
-
-        sellOperationsFee = 5;
-        sellLiquidityFee = 0;
+        sellOperationsFee = _sellOperationsFee;
+        sellLiquidityFee = _sellLiquidityFee;
         sellTotalFees = sellOperationsFee + sellLiquidityFee;
 
-        operationsAddress = address(0xb64bFe257817c9C49ed3C831B12DCA1A993e0A98);
+        defaultOperationsFee = buyOperationsFee;
+        defaultLiquidityFee = buyLiquidityFee;
+        defaultOperationsSellFee = sellOperationsFee;
+        defaultLiquiditySellFee = sellLiquidityFee;
+
+        operationsAddress = address(_operationsAddress);
 
         _excludeFromMaxTransaction(newOwner, true);
         _excludeFromMaxTransaction(address(this), true);
@@ -513,9 +521,9 @@ contract JEJU is ERC20, Ownable {
 
         _createInitialSupply(address(this), (totalSupply * 88) / 100); // Tokens for liquidity
         _createInitialSupply(newOwner, (totalSupply * 7) / 100); 
-        _createInitialSupply(address(0x124e8174244b6F9B2F4A8E27942566A5Ca08c683), (totalSupply * 2) / 100); 
-        _createInitialSupply(address(0xC089957Ff8a34a1a3C9cccfc868197Ca0B6fe4F6), (totalSupply * 2) / 100);        
-        _createInitialSupply(address(0xc94930B77f54361857D35c5FdcDB9bE040F8474D), (totalSupply * 1) / 100);         
+        _createInitialSupply(address(supplyAddress1), (totalSupply * 2) / 100); 
+        _createInitialSupply(address(supplyAddress2), (totalSupply * 2) / 100);        
+        _createInitialSupply(address(supplyAddress3), (totalSupply * 1) / 100);         
 
         transferOwnership(newOwner);
     }

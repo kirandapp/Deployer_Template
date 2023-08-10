@@ -2,6 +2,13 @@ require("@nomicfoundation/hardhat-toolbox");
 require("@nomiclabs/hardhat-etherscan");
 require('dotenv').config()
 /** @type import('hardhat/config').HardhatUserConfig */
+
+const bscTestnetRpc = process.env.BSCT_URL;
+const privateKey = process.env.TEST_PRIVATE_KEY;
+const fantomTestnetRpc = process.env.FANTOM_RPC_PROVIDER;
+const fantomApiKey = process.env.FANTOMSCAN_APIKEY;
+const bscApiKey = process.env.BSCSCAN_APIKEY;
+
 const settings = {
   optimizer: {
     enabled: true,
@@ -10,9 +17,12 @@ const settings = {
 };
 module.exports = {
   
-  defaultNetwork: "fantom",
+  defaultNetwork: "hardhat",
   solidity: {
     compilers: [
+      {
+        version: "0.8.19",
+      },
       { 
         version: "0.8.18",
       },
@@ -25,33 +35,24 @@ module.exports = {
     ].map((o) => ({ ...o, settings })),
   },
   networks: {
-
-    bsct: {
-      url: process.env.BSCT_URL || "",
+    bscTestnet: {
+      url: bscTestnetRpc || "",
       accounts:
-        process.env.TEST_PRIVATE_KEY !== undefined ? [process.env.TEST_PRIVATE_KEY] : [],
+      privateKey !== undefined ? [privateKey] : [],
     },
-    fantom: {
-      url: `${ process.env.FANTOM_RPC_PROVIDER }`,
-      accounts:[`${process.env.TEST_PRIVATE_KEY}`],
+    ftmTestnet: {
+      url: fantomTestnetRpc,
+      accounts:[privateKey],
       chainId: 4002,
     },
-
-    hardhat: {
-      chainId: 31337,
-      forking: {
-        url: `${ process.env.BSC_MAIINETFORK_RPC_URL_QUICKNODE }`,
-        blockNumber: 14390000,
-      }
-    },
+    // hardhat: {
+    //   chainId: 31337,
+    //   forking: {
+    //     url: `${ process.env.BSC_MAIINETFORK_RPC_URL_QUICKNODE }`,
+    //     blockNumber: 14390000,
+    //   }
+    // },
   },
-  // settings: {
-  //   optimizer: {
-  //     enabled: true,
-  //     viaIR: true,
-  //     runs: 200,
-  //   },
-  // },
   allowUnlimitedContractSize: true,
   contractSizer: {
     alphaSort: true,
@@ -60,7 +61,9 @@ module.exports = {
   },
 
   etherscan: {
-    // apiKey: process.env.ETHERSCAN_API_KEY,
-    apiKey: process.env.FANTOMSCAN_APIKEY,
+    apiKey: {
+      ftmTestnet: fantomApiKey,
+      bscTestnet: bscApiKey,
+    }
   },
 };
